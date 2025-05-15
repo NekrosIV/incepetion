@@ -1,6 +1,6 @@
 [mysqld]
-port = 3306
-bind-address = 0.0.0.0
-user = mysql
-datadir = /var/lib/mysql
-socket = /run/mysqld/mysqld.sock
+user        = mysql
+datadir     = /var/lib/mysql
+port        = 3306
+bind-address = 0.0.0.0       # pour accepter les connexions réseaux de WordPress
+# socket = /var/run/mysqld/mysqld.sock   <-- (optionnel, c’est la valeur par défaut)

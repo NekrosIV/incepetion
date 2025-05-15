@@ -1,0 +1,78 @@
+
+
+########################################################################
+#  SERVICES
+########################################################################
+services:
+  ######################################################################
+  # MariaDB
+  ######################################################################
+  mariadb:
+    build:
+      context: requirements/mariadb
+      dockerfile: Dockerfile
+    container_name: mariadb
+    env_file: .env                     # SQL_ROOT_PASSWORD, SQL_USER, …
+    volumes:
+      - mariadb_data:/var/lib/mysql    # volume Docker → verrou OK
+    networks:
+      - inception
+    expose:
+      - "3306"
+    restart: unless-stopped
+
+  ######################################################################
+  # WordPress (PHP-FPM)
+  ######################################################################
+  wordpress:
+    build:
+      context: requirements/wordpress
+      dockerfile: Dockerfile
+    container_name: wordpress
+    env_file: .env                     # WP_DB_* variables
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_NAME: ${SQL_DATABASE}
+      WORDPRESS_DB_USER: ${SQL_USER}
+      WORDPRESS_DB_PASSWORD: ${SQL_PASSWORD}
+    depends_on: 
+      - mariadb
+    volumes:
+      - wordpress_data:/var/www/wordpress
+    networks:
+      - inception
+    expose:
+      - "9000"
+    restart: on-failure
+
+  ######################################################################
+  # Nginx (reverse-proxy)
+  ######################################################################
+  nginx:
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress_data:/var/www/wordpress
+    networks:
+      - inception
+    ports:
+      - "443:443"                      # HTTPS vers l’extérieur
+    restart: on-failure
+
+########################################################################
+#  VOLUMES  (Aucun chemin hôte → Docker stocke en ext4 natif)
+########################################################################
+volumes:
+  mariadb_data:
+  wordpress_data:
+
+########################################################################
+#  RÉSEAU
+########################################################################
+networks:
+  inception:
+    driver: bridge
