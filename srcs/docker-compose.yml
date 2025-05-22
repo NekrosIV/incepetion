@@ -101,6 +101,17 @@ services:
       - jellyfin_config:/config
       - jellyfin_media:/media
     restart: unless-stopped
+  
+  static_site:
+    build:
+      context: ./requirements/bonus/static_site
+      dockerfile: Dockerfile
+    container_name: static_site
+    networks:
+      - inception
+    ports:
+      - "80:80"
+    restart: on-failure
 
 
 volumes:

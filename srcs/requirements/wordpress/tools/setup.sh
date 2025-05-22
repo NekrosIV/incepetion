@@ -1,18 +1,13 @@
 #!/bin/bash
 set -e
 
-# 1. attend MariaDB (inchangé)
-# …
-
 WP_PATH=/var/www/wordpress
 
 if [ ! -f "${WP_PATH}/wp-config.php" ]; then
   echo "Téléchargement de WordPress…"
-
-  # premier essai « normal »
   if ! wp core download --path=${WP_PATH} --allow-root; then
       echo "❗ 1ᵉʳ essai échoué, on recommence en --insecure"
-      rm -rf ${WP_PATH:?}/*                 # on vide le dossier
+      rm -rf ${WP_PATH:?}/*                
       wp core download --path=${WP_PATH} --allow-root --insecure
   fi
 
@@ -48,7 +43,6 @@ if [ ! -f "${WP_PATH}/wp-config.php" ]; then
   wp redis enable --path=${WP_PATH} --allow-root
 fi
 
-# Remplace le socket par un port TCP
 sed -i 's|^listen = .*|listen = 9000|' /etc/php/7.4/fpm/pool.d/www.conf
 
 echo "Démarrage de PHP-FPM…"
