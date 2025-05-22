@@ -38,6 +38,14 @@ if [ ! -f "${WP_PATH}/wp-config.php" ]; then
        --user_pass=$WP_USER_PASSWORD \
        --role=author \
        --path=${WP_PATH} --allow-root
+  echo "Configuration Redis pour le cache"
+  echo "define(''WP_REDIS_HOST', 'redis');" >> ${WP_PATH}/wp-config.php
+  
+  echo "Installation et activation du plugin Redis Object Cache…"
+  wp plugin install redis-cache --activate --path=${WP_PATH} --allow-root
+
+  echo "Activation automatique du cache Redis…"
+  wp redis enable --path=${WP_PATH} --allow-root
 fi
 
 # Remplace le socket par un port TCP

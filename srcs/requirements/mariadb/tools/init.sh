@@ -34,6 +34,13 @@ echo "⏳ Attente du démarrage de MariaDB…"
 until mysqladmin ping --silent; do sleep 1; done
 echo "✅ MariaDB prêt"
 
+cat > /root/.my.cnf <<EOF
+[client]
+user=root
+password=${SQL_ROOT_PASSWORD}
+EOF
+chmod 600 /root/.my.cnf
+
 ###############################################################################
 # 4) Première configuration (si la base n’existe pas encore)
 ###############################################################################
