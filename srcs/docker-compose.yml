@@ -110,7 +110,7 @@ services:
     networks:
       - inception
     ports:
-      - "80:80"
+      - "6060:6060"
     restart: on-failure
 
 

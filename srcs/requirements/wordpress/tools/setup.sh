@@ -34,8 +34,8 @@ if [ ! -f "${WP_PATH}/wp-config.php" ]; then
        --role=author \
        --path=${WP_PATH} --allow-root
   echo "Configuration Redis pour le cache"
-  echo "define(''WP_REDIS_HOST', 'redis');" >> ${WP_PATH}/wp-config.php
-  
+  wp config set WP_REDIS_HOST 'redis' --type=constant --path=${WP_PATH} --allow-root
+
   echo "Installation et activation du plugin Redis Object Cache…"
   wp plugin install redis-cache --activate --path=${WP_PATH} --allow-root
 
